@@ -27,7 +27,8 @@ func SaveImageToFileAsJPG(filename string, image image.Image) {
 	CheckError(err)
 	defer outfile.Close()
 
-	jpeg.Encode(outfile, image, nil)
+	// jpeg.Encode(outfile, image, nil)
+	jpeg.Encode(outfile, image, &jpeg.Options{jpeg.DefaultQuality})
 }
 
 //
