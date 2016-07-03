@@ -1,10 +1,9 @@
 package mimage
 
 import "image"
-
-import _ "image/png"  // The data we are given might be a png file... so need to import image/png
-import _ "image/jpeg" // The data we are given might be a jpg file... so need to import image/jpeg
-import _ "image/gif"  // The data we are given might be a gif file... so need to import image/gif
+import _ "image/png"  // The data we are given might be a png file... so need to import image/png to have it's initialisation effects...
+import _ "image/jpeg" // The data we are given might be a jpg file... so need to import image/jpeg to have it's initialisation effects...
+import _ "image/gif"  // The data we are given might be a gif file... so need to import image/gif to have it's initialisation effects...
 import "strings"
 import "../lib/util"
 
