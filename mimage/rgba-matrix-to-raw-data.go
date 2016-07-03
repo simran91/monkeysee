@@ -42,7 +42,7 @@ func RGBAMatrixToImage(imageMatrix ImageMatrix) image.Image {
 			b := uint8(imageMatrix["b"][x][y])
 			a := uint8(imageMatrix["a"][x][y])
 
-			colour := color.RGBA{r, b, g, a}
+			colour := color.RGBA{r, g, b, a}
 
 			newImage.SetRGBA(x, y, colour)
 		}
