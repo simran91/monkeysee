@@ -11,6 +11,6 @@ func LoadImageFromFile(filename string) *MImage {
 	util.CheckError(err)
 	data := string(sliceOfBytes)
 	mimage := &MImage{}
-    mimage.SetRawData(data)
+	mimage.SetRawData(data)
 	return mimage
 }

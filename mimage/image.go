@@ -42,7 +42,6 @@ func (i *MImage) ColourMatrix() ImageMatrix {
 		colourMatrix = append(colourMatrix, column)
 	}
 
-
 	// debugPrintMatrix(colourMatrix)
 
 	return colourMatrix

@@ -27,7 +27,6 @@ func ColourMatrixToImage(imageMatrix ImageMatrix) image.Image {
 	// *****************************************************************************
 	// *****************************************************************************
 
-
 	width := len(imageMatrix)
 	height := len(imageMatrix[0])
 
