@@ -36,7 +36,13 @@ func (i *MImage) ColourMatrix() ImageMatrix {
 		column := make([]color.Color, height)
 
 		for y := 0; y < height; y++ {
-			column[y] = src.At(x, y)
+			colour := src.At(x, y)
+			// column[y] = colour
+
+			// Doing the below as JPG's have a color.YCbCr model, and we want
+			// to keep things in RGBA for consistency...
+			r, g, b, a := colour.RGBA()
+			column[y] = color.RGBA{uint8(r), uint8(g), uint8(b), uint8(a)}
 		}
 
 		colourMatrix = append(colourMatrix, column)

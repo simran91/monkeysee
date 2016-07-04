@@ -13,8 +13,7 @@ func main() {
 
 	stringRegex := regexp.MustCompile(`\.`)
 
-	// sourceFiles := []string{"samples/rgb.jpg", "samples/rgb.jpg", "samples/rgb.jpg"}
-	sourceFiles := []string{"samples/rgb.png", "samples/rgb.gif"}
+	sourceFiles := []string{"samples/rgb.png", "samples/rgb.jpg", "samples/rgb.gif"}
 
 	for _, sourceImage := range sourceFiles {
 		fmt.Println("In:", sourceImage)

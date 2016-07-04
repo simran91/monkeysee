@@ -19,13 +19,6 @@ func ColourMatrixToImage(imageMatrix ImageMatrix) image.Image {
 	// *****************************************************************************
 	// *****************************************************************************
 
-	// *****************************************************************************
-	// *****************************************************************************
-	// TODO: At the moment we cannot deal with JPEG images as they are in a YCbCr
-	// colour model. We only know how to deal with RGBA's for now... should introduce
-	// working with other models in the future...
-	// *****************************************************************************
-	// *****************************************************************************
 
 	width := len(imageMatrix)
 	height := len(imageMatrix[0])
@@ -34,15 +27,11 @@ func ColourMatrixToImage(imageMatrix ImageMatrix) image.Image {
 	// Create a new image.Image...
 	//
 	newImage := image.NewRGBA(image.Rectangle{image.Point{0, 0}, image.Point{width, height}})
-	// newImage := image.NewYCbCr(image.Rectangle{image.Point{0, 0}, image.Point{width, height}}, image.YCbCrSubsampleRatio440)
 
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
 			colour := imageMatrix[x][y].(color.RGBA)
 			newImage.SetRGBA(x, y, colour)
-			// colour := imageMatrix[x][y].(color.YCbCr)
-			// newImage.Set(x, y, colour)
-
 		}
 	}
 
