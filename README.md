@@ -10,3 +10,9 @@ will come in handy then :)
 
 The name MonkeySee comes from the phrase "Monkey See, Monkey Do" - in our case, Monkey See, and i'll write
 mods for the "Do" part (although of course, you can easily write your own mods too :) 
+
+NOTE
+
+The package cannot currently read JPEG images.
+
+PNG, GIF's i have tried use a RGBA colour model, but JPEG's seem to use a YCbCr colour model (which we have not catered for in the code yet)
