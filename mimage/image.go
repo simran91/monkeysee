@@ -32,10 +32,10 @@ func (i *MImage) ColourMatrix() ImageMatrix {
 	width, height := bounds.Max.X, bounds.Max.Y
 	colourMatrix := ImageMatrix{}
 
-	for x := 0; x < width; x++ {
+	for x := bounds.Min.X; x < width; x++ {
 		column := make([]color.Color, height)
 
-		for y := 0; y < height; y++ {
+		for y := bounds.Min.Y; y < height; y++ {
 			colour := src.At(x, y)
 			// column[y] = colour
 
