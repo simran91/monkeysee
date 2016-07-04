@@ -13,12 +13,13 @@ func main() {
 
 	stringRegex := regexp.MustCompile(`\.`)
 
-	sourceFiles := []string{"samples/rgb.png", "samples/rgb.jpg", "samples/rgb.gif"}
+	// sourceFiles := []string{"samples/rgb.jpg", "samples/rgb.jpg", "samples/rgb.jpg"}
+	sourceFiles := []string{"samples/rgb.png", "samples/rgb.gif"}
 
 	for _, sourceImage := range sourceFiles {
 		fmt.Println("In:", sourceImage)
 		image := mimage.LoadImageFromFile(sourceImage)
-		rgba := image.RGBAMatrix()
+		colourMatrix := image.ColourMatrix()
 
 		//
 		// mod: SwapRGBtoGBR
@@ -26,8 +27,8 @@ func main() {
 		{
 			fmt.Println("Running mods.SwapRGBtoGBR")
 
-			newRGBA := mods.SwapRGBtoGBR(rgba)
-			newImage := mimage.RGBAMatrixToImage(newRGBA)
+			newColourMatrix := mods.SwapRGBtoGBR(colourMatrix)
+			newImage := mimage.ColourMatrixToImage(newColourMatrix)
 
 			// Save as PNG
 			{
