@@ -29,6 +29,7 @@ func (m ImageMatrix) GetKernelMatrix(origX, origY, size int) ImageMatrix {
         column := make([]color.Color, (2*size+1))
 
 		if i < 0 || i >= width {
+			kernelMatrix = append(kernelMatrix, column)
 			continue
 		}
 
@@ -44,5 +45,5 @@ func (m ImageMatrix) GetKernelMatrix(origX, origY, size int) ImageMatrix {
 	    kernelMatrix = append(kernelMatrix, column)
 	}
 
-    return kernelMatrix
+	return kernelMatrix
 }
