@@ -16,11 +16,6 @@ type MImage struct {
 }
 
 //
-// ImageMatrix defines how we store our matrix of Colours...
-//
-type ImageMatrix [][]color.Color
-
-//
 // ColourMatrix reads in the rawdata and returns a ColourMatrix
 //
 func (i *MImage) ColourMatrix() ImageMatrix {
@@ -52,3 +47,4 @@ func (i *MImage) ColourMatrix() ImageMatrix {
 
 	return colourMatrix
 }
+
