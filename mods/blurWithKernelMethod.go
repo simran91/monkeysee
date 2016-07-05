@@ -29,8 +29,6 @@ func BlurWithKernelMethod(matrix mimage.ImageMatrix, blurAmount int) mimage.Imag
 
 			kernelMatrix := matrix.GetKernelMatrix(x, y, blurAmount)
 
-			// Look on each side (left, right, above, below) of the current pixel based on the blurAmount
-			// and set the pixel value to the average of all the pixels we looked at
 			for _, column := range kernelMatrix {
 				for _, colour := range column {
 					if (colour == nil) {
@@ -42,8 +40,6 @@ func BlurWithKernelMethod(matrix mimage.ImageMatrix, blurAmount int) mimage.Imag
 					greenTotal += int(c.G)
 					blueTotal += int(c.B)
 					samples++
-
-					// fmt.Println("redTotal [%v,%v] %v\n", i, j)
 				}
 			}
 
