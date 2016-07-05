@@ -4,7 +4,7 @@ import "../mimage"
 import "image/color"
 
 //
-// GreyscaleAverageWithTranslusence is a mod that that does a simple average greyscale conversion...
+// GreyscaleAverageWithTranslusence is a mod that does a simple average greyscale conversion...
 //
 func GreyscaleAverageWithTranslusence(matrix mimage.ImageMatrix) mimage.ImageMatrix {
 
