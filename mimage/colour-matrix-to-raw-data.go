@@ -19,7 +19,6 @@ func ColourMatrixToImage(imageMatrix ImageMatrix) image.Image {
 	// *****************************************************************************
 	// *****************************************************************************
 
-
 	width := len(imageMatrix)
 	height := len(imageMatrix[0])
 
@@ -34,7 +33,7 @@ func ColourMatrixToImage(imageMatrix ImageMatrix) image.Image {
 			value := imageMatrix[x][y]
 			colour := color.RGBA{}
 
-			if (value == nil) {
+			if value == nil {
 				colour = color.RGBA{0, 0, 0, 0}
 			} else {
 				colour = value.(color.RGBA)
