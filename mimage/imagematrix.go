@@ -14,6 +14,13 @@ type ImageMatrix [][]color.Color
 // 			   4,6 5,6 6,6
 // The above will be returned as it's own new ImageMatrix
 //
+// No matter what the pixel or the size of the kenel being requested, it will always return an
+// a square ImageMatrix of each side = (size*2 + 1). The square matrix should make it easier
+// for us to do matrix maths on.
+//
+// See https://en.wikipedia.org/wiki/Kernel_(image_processing)#Origin for how to do Gaussian Blur's,
+// Image Sharpen's, etc, etc, etc...
+//
 func (m ImageMatrix) GetKernelMatrix(origX, origY, size int) ImageMatrix {
 
 	width := len(m)
