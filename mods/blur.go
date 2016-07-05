@@ -42,6 +42,7 @@ func Blur(matrix mimage.ImageMatrix, blurAmount int) mimage.ImageMatrix {
 			// and set the pixel value to the average of all the pixels we looked at
 			for i := (x - blurAmount); i <= (x + blurAmount); i++ {
 				if i < 0 || i >= width {
+					column[y] = color.RGBA{}
 					continue
 				}
 
