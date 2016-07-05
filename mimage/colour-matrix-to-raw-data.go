@@ -30,7 +30,16 @@ func ColourMatrixToImage(imageMatrix ImageMatrix) image.Image {
 
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
-			colour := imageMatrix[x][y].(color.RGBA)
+
+			value := imageMatrix[x][y]
+			colour := color.RGBA{}
+
+			if (value == nil) {
+				colour = color.RGBA{0, 0, 0, 0}
+			} else {
+				colour = value.(color.RGBA)
+			}
+
 			newImage.SetRGBA(x, y, colour)
 		}
 	}
