@@ -11,7 +11,6 @@ import "./lib/util"
 //
 func main() {
 
-
 	sourceFiles := []string{"samples/rgb.png", "samples/rgb.jpg", "samples/rgb.gif"}
 	// sourceFiles := []string{"samples/rgb.png"}
 
@@ -29,7 +28,6 @@ func main() {
 		modBlur(destFileInit, image, colourMatrix, 8)
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: SwapRGBtoGBR

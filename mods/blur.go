@@ -2,6 +2,7 @@ package mods
 
 import "../mimage"
 import "image/color"
+
 // import "fmt"
 
 //
@@ -23,7 +24,6 @@ func Blur(matrix mimage.ImageMatrix, blurAmount int) mimage.ImageMatrix {
 	height := len(matrix[0])
 	newMatrix := mimage.ImageMatrix{}
 
-
 	// for each row of the image...
 	for x := 0; x < width; x++ {
 		column := make([]color.Color, height)
@@ -40,13 +40,13 @@ func Blur(matrix mimage.ImageMatrix, blurAmount int) mimage.ImageMatrix {
 
 			// Look on each side (left, right, above, below) of the current pixel based on the blurAmount
 			// and set the pixel value to the average of all the pixels we looked at
-            for i := (x - blurAmount); i <= (x + blurAmount); i++ {
-				if (i < 0 || i >= width) {
+			for i := (x - blurAmount); i <= (x + blurAmount); i++ {
+				if i < 0 || i >= width {
 					continue
 				}
 
 				for j := (y - blurAmount); j <= (y + blurAmount); j++ {
-					if (j < 0 || j >= height) {
+					if j < 0 || j >= height {
 						continue
 					}
 
@@ -59,7 +59,7 @@ func Blur(matrix mimage.ImageMatrix, blurAmount int) mimage.ImageMatrix {
 
 					// fmt.Println("redTotal [%v,%v] %v\n", i, j)
 				}
-            }
+			}
 
 			newRedValue := uint8(redTotal / samples)
 			newGreenValue := uint8(greenTotal / samples)
