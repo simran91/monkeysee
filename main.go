@@ -21,21 +21,24 @@ func main() {
 	stringRegex := regexp.MustCompile(`\.`)
 
 	for _, sourceFile := range sourceFiles {
-		fmt.Println("In:", sourceFile)
+		fmt.Println("In:", filepath.Join(sourceDir, sourceFile))
 		image := mimage.LoadImageFromFile(filepath.Join(sourceDir,sourceFile))
-		colourMatrix := image.ColourMatrix()
+
 		destFileInit := string(stringRegex.ReplaceAll([]byte(sourceFile), []byte{'-'}))
 
-		modSwapRGBtoGBR(destDir, destFileInit, image, colourMatrix)
-		modGreyscaleAverageWithTranslusence(destDir, destFileInit, image, colourMatrix)
-		modBlur(destDir, destFileInit, image, colourMatrix, 8)
+
+		modSwapRGBtoGBR(destDir, destFileInit, image.ColourMatrix())
+		modGreyscaleAverageWithTranslusence(destDir, destFileInit, image.ColourMatrix())
+		modBlur(destDir, destFileInit, image.ColourMatrix(), 8)
+		modBlurWithKernelMethod(destDir, destFileInit, image.ColourMatrix(), 8)
+
 	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: SwapRGBtoGBR
 //
-func modSwapRGBtoGBR(destDir, destFileInit string, image *mimage.MImage, colourMatrix mimage.ImageMatrix) {
+func modSwapRGBtoGBR(destDir, destFileInit string, colourMatrix mimage.ImageMatrix) {
 	modName := "SwapRGBtoGBR"
 	fmt.Printf("Running mods.%v\n", modName)
 
@@ -63,7 +66,7 @@ func modSwapRGBtoGBR(destDir, destFileInit string, image *mimage.MImage, colourM
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: GreyscaleAverageWithTranslusence
 //
-func modGreyscaleAverageWithTranslusence(destDir, destFileInit string, image *mimage.MImage, colourMatrix mimage.ImageMatrix) {
+func modGreyscaleAverageWithTranslusence(destDir, destFileInit string, colourMatrix mimage.ImageMatrix) {
 	modName := "GreyscaleAverageWithTranslusence"
 	fmt.Printf("Running mods.%v\n", modName)
 
@@ -91,11 +94,39 @@ func modGreyscaleAverageWithTranslusence(destDir, destFileInit string, image *mi
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: Blur
 //
-func modBlur(destDir, destFileInit string, image *mimage.MImage, colourMatrix mimage.ImageMatrix, blurAmount int) {
+func modBlur(destDir, destFileInit string, colourMatrix mimage.ImageMatrix, blurAmount int) {
 	modName := "Blur"
 	fmt.Printf("Running mods.%v\n", modName)
 
 	newColourMatrix := mods.Blur(colourMatrix, blurAmount)
+	newImage := mimage.ColourMatrixToImage(newColourMatrix)
+
+	// Save as PNG
+	destImage := filepath.Join(destDir, modName, destFileInit + "-to-png.png")
+	fmt.Println("Out:", destImage)
+	util.SaveImageToFileAsPNG(destImage, newImage)
+
+	// Save as JPG
+	destImage = filepath.Join(destDir, modName, destFileInit + "-to-jpg.jpg")
+	fmt.Println("Out:", destImage)
+	util.SaveImageToFileAsJPG(destImage, newImage)
+
+	// Save as GIF
+	destImage = filepath.Join(destDir, modName, destFileInit + "-to-gif.gif")
+	fmt.Println("Out:", destImage)
+	util.SaveImageToFileAsGIF(destImage, newImage)
+
+	fmt.Println()
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// mod: modBlurWithKernelMethod
+//
+func modBlurWithKernelMethod(destDir, destFileInit string, colourMatrix mimage.ImageMatrix, blurAmount int) {
+	modName := "BlurWithKernelMethod"
+	fmt.Printf("Running mods.%v\n", modName)
+
+	newColourMatrix := mods.BlurWithKernelMethod(colourMatrix, blurAmount)
 	newImage := mimage.ColourMatrixToImage(newColourMatrix)
 
 	// Save as PNG

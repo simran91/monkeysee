@@ -38,8 +38,6 @@ func Blur(matrix mimage.ImageMatrix, blurAmount int) mimage.ImageMatrix {
 			blueTotal := int(currentColour.B)
 			samples := 1
 
-			// kernel := matrix.GetKernel(blurAmount)
-
 			// Look on each side (left, right, above, below) of the current pixel based on the blurAmount
 			// and set the pixel value to the average of all the pixels we looked at
 			for i := (x - blurAmount); i <= (x + blurAmount); i++ {
