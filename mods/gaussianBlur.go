@@ -4,7 +4,7 @@ import "../mimage"
 // import "image/color"
 
 // GaussianBlurConvolution ...
-var GaussianBlurConvolution = [][]uint8{
+var GaussianBlurConvolution = mimage.ConvolutionMatrix{
 									{1, 2, 1},
 									{2, 4, 2},
 									{1, 2, 1},

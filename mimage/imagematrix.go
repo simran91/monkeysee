@@ -8,6 +8,11 @@ import "log"
 //
 type ImageMatrix [][]color.Color
 
+//
+// ConvolutionMatrix defines how we store our convolution matrices... 
+//
+type ConvolutionMatrix [][]uint8
+
 // GetKernelMatrix returns an ImageMatrix around the pixel (x,y) based on the size of the kernel we requested
 // eg. A GetKernelMatrix(5, 5, 1) will return an ImageMatrix that is built from the
 //     pixels: 4,4 5,4 6,4
@@ -59,7 +64,7 @@ func (im ImageMatrix) GetKernelMatrix(origX, origY, size int) ImageMatrix {
 //
 // ApplyConvolution apply's a convolution matrix to the current image.
 //
-func (im ImageMatrix) ApplyConvolution(cm [][]uint8) ImageMatrix {
+func (im ImageMatrix) ApplyConvolution(cm ConvolutionMatrix) ImageMatrix {
 	cmWidth := len(cm)
 	cmHeight := len(cm[0])
 

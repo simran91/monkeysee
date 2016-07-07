@@ -37,7 +37,10 @@ func (i *MImage) ColourMatrix() ImageMatrix {
 			// Doing the below as JPG's have a color.YCbCr model, and we want
 			// to keep things in RGBA for consistency...
 			r, g, b, a := colour.RGBA()
-			column[y] = color.RGBA{uint8(r), uint8(g), uint8(b), uint8(a)}
+
+            // right shift the values by 8 bits as colour.RGBA() will return a uint32, and we want to keep the most 
+            // significant 8 bits NOT the least significant 8 bits 
+			column[y] = color.RGBA{uint8(r>>8), uint8(g>>8), uint8(b>>8), uint8(a>>8)}
 		}
 
 		colourMatrix = append(colourMatrix, column)
