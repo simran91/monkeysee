@@ -34,8 +34,8 @@ func (i *MImage) ColourMatrix() ImageMatrix {
 			colour := src.At(x, y)
 			// column[y] = colour
 
-			// Doing the below as JPG's have a color.YCbCr model, and we want
-			// to keep things in RGBA for consistency...
+			// Doing the below as JPG's usually have a color.YCbCr model, and we want
+			// to keep things in RGBA for simplicity of code... for now :) 
 			r, g, b, a := colour.RGBA()
 
             // right shift the values by 8 bits as colour.RGBA() will return a uint32, and we want to keep the most 
