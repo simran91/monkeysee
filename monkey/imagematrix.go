@@ -9,11 +9,6 @@ import "math"
 //
 type ImageMatrix [][]color.Color
 
-//
-// ConvolutionMatrix defines how we store our convolution matrices...
-//
-type ConvolutionMatrix [][]float64
-
 // GetKernelMatrix returns an ImageMatrix around the pixel (x,y) based on the size of the kernel we requested
 // eg. A GetKernelMatrix(5, 5, 1) will return an ImageMatrix that is built from the
 //     pixels: 4,4 5,4 6,4
@@ -30,8 +25,8 @@ type ConvolutionMatrix [][]float64
 //
 func (im ImageMatrix) GetKernelMatrix(origX, origY, size int) ImageMatrix {
 
-	width := len(im)
-	height := len(im[0])
+	width := im.GetWidth()
+	height := im.GetHeight()
 
 	kernelMatrix := ImageMatrix{}
 
@@ -86,8 +81,8 @@ func (im ImageMatrix) ApplyConvolutionWithSampleFunction(cm ConvolutionMatrix) I
 // weight in the convolution matrix to end up with the final weight that the pixel should have
 //
 func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc func(ImageMatrix, int, int, int, int, color.RGBA, float64) float64) ImageMatrix {
-	cmWidth := len(cm)
-	cmHeight := len(cm[0])
+	cmWidth := cm.GetWidth()
+	cmHeight := cm.GetHeight()
 
 	// Check to ensure that the convolutio matrix is a square and an odd number of rows/cols
 	// This must be the case as we look up/down and left/right and equal amount from our current pixel
@@ -102,8 +97,8 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
 	//
 	//
 	newMatrix := ImageMatrix{}
-	imWidth := len(im)
-	imHeight := len(im[0])
+	imWidth := im.GetWidth()
+	imHeight := im.GetHeight()
 	cmSize := int(cmWidth / 2)
 
 	//
@@ -173,19 +168,17 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
 	return newMatrix
 }
 
-func dontModifyConvolutionMatrixWeights(im ImageMatrix, imagePositionX int, imagePositionY int, kernelPixelX int, kernelPixel int, colour color.RGBA, distance float64) float64 {
-	return 1
-
+//
+// GetWidth returns the height of the image
+//
+func (im ImageMatrix) GetWidth() int {
+	return len(im)
 }
 
-func convolutionMatrixSampleFunction(im ImageMatrix, imagePositionX int, imagePositionY int, kernelPixelX int, kernelPixel int, colour color.RGBA, distance float64) float64 {
-	if (distance < 2) {
-		return 0
-	}
-
-	if (colour.R > 150 && colour.G < 100 && colour.B < 100) {
-		return 5 * distance
-	}
-
-	return 1
+//
+// GetHeight returns the height of the image
+//
+func (im ImageMatrix) GetHeight() int {
+	return len(im[0])
 }
+
