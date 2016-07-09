@@ -42,14 +42,14 @@ func main() {
 
 		image := monkey.LoadImageFromFile(filepath.Join(sourceDir, sourceFile))
 		destFileInit := string(stringRegex.ReplaceAll([]byte(sourceFile), []byte{'-'}))
-
-		//
+		
 		runMod(modSwapRGBtoGBR, destDir, destFileInit, image.ColourMatrix())
 		runMod(modGreyscaleAverageWithTranslusence, destDir, destFileInit, image.ColourMatrix())
 		runMod(modBlur, destDir, destFileInit, image.ColourMatrix(), 8)
 		runMod(modBlurWithKernelMethod, destDir, destFileInit, image.ColourMatrix(), 8)
 		runMod(modGaussianBlur, destDir, destFileInit, image.ColourMatrix())
 		runMod(modAverageBlur, destDir, destFileInit, image.ColourMatrix())
+		runMod(modConvolutionWithRedInfluenceSampleFunction, destDir, destFileInit, image.ColourMatrix())
 	}
 }
 
@@ -142,5 +142,13 @@ func modGaussianBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatr
 //
 func modAverageBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
 	newColourMatrix := mods.AverageBlur(colourMatrix)
+	return newColourMatrix
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// mod: modConvolutionWithRedInfluenceSampleFunction
+//
+func modConvolutionWithRedInfluenceSampleFunction(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+	newColourMatrix := mods.ConvolutionWithRedInfluenceSampleFunction(colourMatrix)
 	return newColourMatrix
 }

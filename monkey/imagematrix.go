@@ -2,6 +2,7 @@ package monkey
 
 import "image/color"
 import "log"
+import "math"
 
 //
 // ImageMatrix defines how we store our matrix of Colours...
@@ -11,7 +12,7 @@ type ImageMatrix [][]color.Color
 //
 // ConvolutionMatrix defines how we store our convolution matrices...
 //
-type ConvolutionMatrix [][]uint8
+type ConvolutionMatrix [][]float64
 
 // GetKernelMatrix returns an ImageMatrix around the pixel (x,y) based on the size of the kernel we requested
 // eg. A GetKernelMatrix(5, 5, 1) will return an ImageMatrix that is built from the
@@ -64,6 +65,35 @@ func (im ImageMatrix) GetKernelMatrix(origX, origY, size int) ImageMatrix {
 // ApplyConvolution apply's a convolution matrix to the current image.
 //
 func (im ImageMatrix) ApplyConvolution(cm ConvolutionMatrix) ImageMatrix {
+	return im.ApplyConvolutionFunction(cm, dontModifyConvolutionMatrixWeights)
+}
+
+//
+// ApplyConvolutionWithRedInfluenceSampleFunction apply's a convolution matrix to the current image but weights
+// the matrix entries for each pixel by giving further away red pixels more of an influence on the pixel being
+// modified
+//
+func (im ImageMatrix) ApplyConvolutionWithRedInfluenceSampleFunction(cm ConvolutionMatrix) ImageMatrix {
+	return im.ApplyConvolutionFunction(cm, convolutionMatrixFartherAwayBrightRedNeighboursInfluencesMore)
+}
+
+//
+// ApplyConvolutionFunction apply's a convolution matrix to the current image, however the weight of the each
+// entry in the convolution matrix is dependant on what your function (that you pass in) returns.
+// This is so that you can return different weights for different conditions of the image.
+// Please see the example, ApplyConvolutionWithRedInfluenceSampleFunction for more detail
+//
+// Please note that as the convolution matrix has weights itself, the result of the function will be multiplied by the
+// weight in the convolution matrix to end up with the final weight that the pixel should have
+//
+// *****************************************************************************
+// *****************************************************************************
+// TODO: So much work to be done in this one... with the function that we are calling, we should
+// pass in a LOT more information, like where we are in reference to the full image as that may influence
+// what happens (eg. we might have an image that is blurred on the edges but sharp in the middle) 
+// *****************************************************************************
+// *****************************************************************************
+func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc func(color.RGBA, float64) float64) ImageMatrix {
 	cmWidth := len(cm)
 	cmHeight := len(cm[0])
 
@@ -93,12 +123,12 @@ func (im ImageMatrix) ApplyConvolution(cm ConvolutionMatrix) ImageMatrix {
 			// look at the current pixel so that we can use it's values as the initial values of the
 			// new pixel in it's place
 			currentColour := im[x][y].(color.RGBA)
-			redTotal := 0   // int(currentColour.R)
-			greenTotal := 0 // int(currentColour.G)
-			blueTotal := 0  // int(currentColour.B)
-			weight := 0
+			redTotal := 0.0
+			greenTotal := 0.0
+			blueTotal := 0.0
+			weight := 0.0
 
-			kernelMatrix := im.GetKernelMatrix(x, y, cmSize) // size hardcoded!!! need to apply right size...
+			kernelMatrix := im.GetKernelMatrix(x, y, cmSize)
 
 			for i, column := range kernelMatrix {
 				for j, colour := range column {
@@ -106,12 +136,26 @@ func (im ImageMatrix) ApplyConvolution(cm ConvolutionMatrix) ImageMatrix {
 						continue
 					}
 
-					cmValue := int(cm[i][j])
-					c := colour.(color.RGBA)
+					//
+					kernelColour := colour.(color.RGBA)
 
-					redTotal += int(c.R) * cmValue
-					greenTotal += int(c.G) * cmValue
-					blueTotal += int(c.B) * cmValue
+					// get the distance of the current pixel compared to the centre of the kernel
+					// the centre one is the one we are modifying and saving to a new image/matrix of course...
+					distance := math.Sqrt(math.Pow(float64(cmSize-i), 2) + math.Pow(float64(cmSize-j), 2))
+
+					// Call the function the user passed and get the return weight of how much influence
+					// it should have over the centre pixel we want to change
+                    // We are multipling it by the weight in the convolution matrix as that way you can
+                    // control an aspect of the weight through the matrix as well (as well as the function that
+                    // we pass in of course :)
+					cmValue := conFunc(kernelColour, distance) * float64(cm[i][j])
+
+					// apply the influence / weight ... (eg. if cmValue was 0, then the current pixel would have
+					// no influence over the pixel we are changing, if it was large in comparision to what we return
+					// for the other kernel pixels, then it will have a large influence)
+					redTotal += float64(kernelColour.R) * cmValue
+					greenTotal += float64(kernelColour.G) * cmValue
+					blueTotal += float64(kernelColour.B) * cmValue
 					weight += cmValue
 				}
 			}
@@ -135,4 +179,39 @@ func (im ImageMatrix) ApplyConvolution(cm ConvolutionMatrix) ImageMatrix {
 	}
 
 	return newMatrix
+}
+
+func dontModifyConvolutionMatrixWeights(colour color.RGBA, distance float64) float64 {
+	//
+	// if (colour.G > 100 && distance > 5) {
+	// 	return 1
+	// }
+	//
+	// return 0
+
+	return 1
+
+	// if (distance == 0) {
+	// 	// fmt.Println("distance is 0")
+	// 	return 0
+	// }
+	// // } else if (distance < 1) {
+	// // 	return 20
+	// // } else if (distance < 2) {
+	// // 	return 80
+	// // }
+	//
+	// return 160
+}
+
+func convolutionMatrixFartherAwayBrightRedNeighboursInfluencesMore (colour color.RGBA, distance float64) float64 {
+	if (distance < 2) {
+		return 0
+	}
+
+	if (colour.R > 150 && colour.G < 100 && colour.B < 100) {
+		return 5 * distance
+	}
+
+	return 1
 }
