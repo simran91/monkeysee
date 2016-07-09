@@ -85,13 +85,6 @@ func (im ImageMatrix) ApplyConvolutionWithSampleFunction(cm ConvolutionMatrix) I
 // Please note that as the convolution matrix has weights itself, the result of the function will be multiplied by the
 // weight in the convolution matrix to end up with the final weight that the pixel should have
 //
-// *****************************************************************************
-// *****************************************************************************
-// TODO: So much work to be done in this one... with the function that we are calling, we should
-// pass in a LOT more information, like where we are in reference to the full image as that may influence
-// what happens (eg. we might have an image that is blurred on the edges but sharp in the middle)
-// *****************************************************************************
-// *****************************************************************************
 func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc func(ImageMatrix, int, int, int, int, color.RGBA, float64) float64) ImageMatrix {
 	cmWidth := len(cm)
 	cmHeight := len(cm[0])
