@@ -1,7 +1,7 @@
 package mimage
 
 import "io/ioutil"
-import "../lib/util"
+import "../util"
 
 //
 // LoadImageFromFile takes a filename and returns the contents of that file as a string...

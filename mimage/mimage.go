@@ -5,7 +5,7 @@ import _ "image/png"  // The data we are given might be a png file... so need to
 import _ "image/jpeg" // The data we are given might be a jpg file... so need to import image/jpeg to have it's initialisation effects...
 import _ "image/gif"  // The data we are given might be a gif file... so need to import image/gif to have it's initialisation effects...
 import "strings"
-import "../lib/util"
+import "../util"
 import "image/color"
 
 //
