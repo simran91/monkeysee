@@ -24,6 +24,7 @@ func main() {
 		sourceFiles = os.Args[1:]
 	} else {
 		sourceFiles = []string{
+			"10x10white.png",
 			"rgb.png",
 			"rgb.jpg",
 			"rgb.gif",
@@ -42,13 +43,13 @@ func main() {
 
 		image := monkey.LoadImageFromFile(filepath.Join(sourceDir, sourceFile))
 		destFileInit := string(stringRegex.ReplaceAll([]byte(sourceFile), []byte{'-'}))
-		
-		// runMod(modSwapRGBtoGBR, destDir, destFileInit, image.ColourMatrix())
-		// runMod(modGreyscaleAverageWithTranslusence, destDir, destFileInit, image.ColourMatrix())
-		// runMod(modBlur, destDir, destFileInit, image.ColourMatrix(), 8)
-		// runMod(modBlurWithKernelMethod, destDir, destFileInit, image.ColourMatrix(), 8)
-		// runMod(modGaussianBlur, destDir, destFileInit, image.ColourMatrix())
-		// runMod(modAverageBlur, destDir, destFileInit, image.ColourMatrix())
+
+		runMod(modSwapRGBtoGBR, destDir, destFileInit, image.ColourMatrix())
+		runMod(modGreyscaleAverageWithTranslusence, destDir, destFileInit, image.ColourMatrix())
+		runMod(modBlur, destDir, destFileInit, image.ColourMatrix(), 8)
+		runMod(modBlurWithKernelMethod, destDir, destFileInit, image.ColourMatrix(), 8)
+		runMod(modGaussianBlur, destDir, destFileInit, image.ColourMatrix())
+		runMod(modAverageBlur, destDir, destFileInit, image.ColourMatrix())
 		runMod(modApplyConvolutionWithSampleFunction, destDir, destFileInit, image.ColourMatrix())
 	}
 }

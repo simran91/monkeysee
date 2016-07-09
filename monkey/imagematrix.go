@@ -80,7 +80,7 @@ func (im ImageMatrix) ApplyConvolutionWithSampleFunction(cm ConvolutionMatrix) I
 // Please note that as the convolution matrix has weights itself, the result of the function will be multiplied by the
 // weight in the convolution matrix to end up with the final weight that the pixel should have
 //
-func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc func(ImageMatrix, int, int, int, int, color.RGBA, float64) float64) ImageMatrix {
+func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc func(ImageMatrix, int, int, int, int, color.RGBA, float64) int) ImageMatrix {
 	cmWidth := cm.GetWidth()
 	cmHeight := cm.GetHeight()
 
@@ -110,10 +110,10 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
 			// look at the current pixel so that we can use it's values as the initial values of the
 			// new pixel in it's place
 			currentColour := im[x][y].(color.RGBA)
-			redTotal := 0.0
-			greenTotal := 0.0
-			blueTotal := 0.0
-			weight := 0.0
+			redTotal := 0
+			greenTotal := 0
+			blueTotal := 0
+			weight := 0
 
 			kernelMatrix := im.GetKernelMatrix(x, y, cmSize)
 
@@ -135,14 +135,14 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
                     // We are multipling it by the weight in the convolution matrix as that way you can
                     // control an aspect of the weight through the matrix as well (as well as the function that
                     // we pass in of course :)
-					cmValue := conFunc(im, x, y, i, j, kernelPixelColour, distance) * float64(cm[i][j])
+					cmValue := conFunc(im, x, y, i, j, kernelPixelColour, distance) * int(cm[i][j])
 
 					// apply the influence / weight ... (eg. if cmValue was 0, then the current pixel would have
 					// no influence over the pixel we are changing, if it was large in comparision to what we return
 					// for the other kernel pixels, then it will have a large influence)
-					redTotal += float64(kernelPixelColour.R) * cmValue
-					greenTotal += float64(kernelPixelColour.G) * cmValue
-					blueTotal += float64(kernelPixelColour.B) * cmValue
+					redTotal += int(kernelPixelColour.R) * cmValue
+					greenTotal += int(kernelPixelColour.G) * cmValue
+					blueTotal += int(kernelPixelColour.B) * cmValue
 					weight += cmValue
 				}
 			}
@@ -181,4 +181,3 @@ func (im ImageMatrix) GetWidth() int {
 func (im ImageMatrix) GetHeight() int {
 	return len(im[0])
 }
-

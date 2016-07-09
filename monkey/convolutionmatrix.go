@@ -4,7 +4,7 @@ package monkey
 //
 // ConvolutionMatrix defines how we store our convolution matrices...
 //
-type ConvolutionMatrix [][]float64
+type ConvolutionMatrix [][]uint8
 
 
 //
