@@ -1,13 +1,13 @@
 package mods
 
-import "../mimage"
+import "../monkey"
 import "image/color"
 
 //
 // SwapRGBtoGBR is a mod that swaps the colours around... it's a very simple mod designed
 // to show how we loop over the ImageMatrix and read the colour values...
 //
-func SwapRGBtoGBR(matrix mimage.ImageMatrix) mimage.ImageMatrix {
+func SwapRGBtoGBR(matrix monkey.ImageMatrix) monkey.ImageMatrix {
 
 	width := len(matrix)
 	height := len(matrix[0])

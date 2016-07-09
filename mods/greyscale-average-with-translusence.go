@@ -1,12 +1,12 @@
 package mods
 
-import "../mimage"
+import "../monkey"
 import "image/color"
 
 //
 // GreyscaleAverageWithTranslusence is a mod that does a simple average greyscale conversion...
 //
-func GreyscaleAverageWithTranslusence(matrix mimage.ImageMatrix) mimage.ImageMatrix {
+func GreyscaleAverageWithTranslusence(matrix monkey.ImageMatrix) monkey.ImageMatrix {
 	width := len(matrix)
 	height := len(matrix[0])
 

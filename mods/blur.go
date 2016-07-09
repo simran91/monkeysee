@@ -1,6 +1,6 @@
 package mods
 
-import "../mimage"
+import "../monkey"
 import "image/color"
 
 // import "fmt"
@@ -18,11 +18,11 @@ import "image/color"
 // *****************************************************************************
 // *****************************************************************************
 //
-func Blur(matrix mimage.ImageMatrix, blurAmount int) mimage.ImageMatrix {
+func Blur(matrix monkey.ImageMatrix, blurAmount int) monkey.ImageMatrix {
 
 	width := len(matrix)
 	height := len(matrix[0])
-	newMatrix := mimage.ImageMatrix{}
+	newMatrix := monkey.ImageMatrix{}
 
 	// for each row of the image...
 	for x := 0; x < width; x++ {

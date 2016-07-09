@@ -1,17 +1,17 @@
 package mods
 
-import "../mimage"
+import "../monkey"
 import "image/color"
 
 //
 // BlurWithKernelMethod is a simpler version of "Blur" as we are using the helper method GetKernelMatrix
 // to get the matrix...
 //
-func BlurWithKernelMethod(matrix mimage.ImageMatrix, blurAmount int) mimage.ImageMatrix {
+func BlurWithKernelMethod(matrix monkey.ImageMatrix, blurAmount int) monkey.ImageMatrix {
 
 	width := len(matrix)
 	height := len(matrix[0])
-	newMatrix := mimage.ImageMatrix{}
+	newMatrix := monkey.ImageMatrix{}
 
 	// for each row of the image...
 	for x := 0; x < width; x++ {
@@ -31,7 +31,7 @@ func BlurWithKernelMethod(matrix mimage.ImageMatrix, blurAmount int) mimage.Imag
 
 			for _, column := range kernelMatrix {
 				for _, colour := range column {
-					if (colour == nil) {
+					if colour == nil {
 						continue
 					}
 

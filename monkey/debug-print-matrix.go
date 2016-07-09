@@ -1,4 +1,4 @@
-package mimage
+package monkey
 
 import "fmt"
 

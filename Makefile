@@ -1,14 +1,19 @@
-default: clearscreen main
+default: clearscreen main-quick
 
-main:
+full: clearscreen main-full
+
+main-quick:
+	@go run main.go rgb.png
+	@echo ""
+	@echo ""
+
+main-full:
 	@go run main.go
 	@echo ""
 	@echo ""
 
 clearscreen:
 	@clear
-
-database: destroydb createdb 
 
 gitpush:
 	git push 

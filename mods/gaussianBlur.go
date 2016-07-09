@@ -1,19 +1,20 @@
 package mods
 
-import "../mimage"
+import "../monkey"
+
 // import "image/color"
 
 // GaussianBlurConvolution ...
-var GaussianBlurConvolution = mimage.ConvolutionMatrix{
-									{1, 2, 1},
-									{2, 4, 2},
-									{1, 2, 1},
-							  }
+var GaussianBlurConvolution = monkey.ConvolutionMatrix{
+	{1, 2, 1},
+	{2, 4, 2},
+	{1, 2, 1},
+}
 
 //
 // GaussianBlur performs a gaussian blur...
 //
-func GaussianBlur(matrix mimage.ImageMatrix) mimage.ImageMatrix {
+func GaussianBlur(matrix monkey.ImageMatrix) monkey.ImageMatrix {
 	newMatrix := matrix.ApplyConvolution(GaussianBlurConvolution)
 	return newMatrix
 }

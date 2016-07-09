@@ -1,4 +1,4 @@
-package mimage
+package monkey
 
 import "image/color"
 import "log"
@@ -9,10 +9,9 @@ import "log"
 type ImageMatrix [][]color.Color
 
 //
-// ConvolutionMatrix defines how we store our convolution matrices... 
+// ConvolutionMatrix defines how we store our convolution matrices...
 //
 type ConvolutionMatrix [][]uint8
-
 
 // GetKernelMatrix returns an ImageMatrix around the pixel (x,y) based on the size of the kernel we requested
 // eg. A GetKernelMatrix(5, 5, 1) will return an ImageMatrix that is built from the
@@ -33,14 +32,13 @@ func (im ImageMatrix) GetKernelMatrix(origX, origY, size int) ImageMatrix {
 	width := len(im)
 	height := len(im[0])
 
-    kernelMatrix := ImageMatrix{}
-
+	kernelMatrix := ImageMatrix{}
 
 	// fmt.Println("origX, origY:", origX, origY, width, height)
 
 	for i := (origX - size); i <= (origX + size); i++ {
-	    kernelY := 0
-        column := make([]color.Color, (2*size+1))
+		kernelY := 0
+		column := make([]color.Color, (2*size + 1))
 
 		if i < 0 || i >= width {
 			kernelMatrix = append(kernelMatrix, column)
@@ -56,12 +54,11 @@ func (im ImageMatrix) GetKernelMatrix(origX, origY, size int) ImageMatrix {
 			kernelY++
 		}
 
-	    kernelMatrix = append(kernelMatrix, column)
+		kernelMatrix = append(kernelMatrix, column)
 	}
 
 	return kernelMatrix
 }
-
 
 //
 // ApplyConvolution apply's a convolution matrix to the current image.
@@ -74,9 +71,9 @@ func (im ImageMatrix) ApplyConvolution(cm ConvolutionMatrix) ImageMatrix {
 	// This must be the case as we look up/down and left/right and equal amount from our current pixel
 	// and we would not be able to have our pixel of interest in the absolute middle if the rows/cols
 	// were not odd!
-	if (cmWidth != cmHeight) {
+	if cmWidth != cmHeight {
 		log.Fatalln("The convolution matrix passed in is not a square matrix!")
-	} else if (cmWidth % 2 == 0) {
+	} else if cmWidth%2 == 0 {
 		log.Fatalln("The convolution matrix must be an odd number of rows/cols in size")
 	}
 
@@ -96,16 +93,16 @@ func (im ImageMatrix) ApplyConvolution(cm ConvolutionMatrix) ImageMatrix {
 			// look at the current pixel so that we can use it's values as the initial values of the
 			// new pixel in it's place
 			currentColour := im[x][y].(color.RGBA)
-			redTotal := 0 // int(currentColour.R)
+			redTotal := 0   // int(currentColour.R)
 			greenTotal := 0 // int(currentColour.G)
-			blueTotal := 0 // int(currentColour.B)
+			blueTotal := 0  // int(currentColour.B)
 			weight := 0
 
 			kernelMatrix := im.GetKernelMatrix(x, y, cmSize) // size hardcoded!!! need to apply right size...
 
 			for i, column := range kernelMatrix {
 				for j, colour := range column {
-					if (colour == nil) {
+					if colour == nil {
 						continue
 					}
 
@@ -120,7 +117,7 @@ func (im ImageMatrix) ApplyConvolution(cm ConvolutionMatrix) ImageMatrix {
 			}
 
 			//
-			if (weight == 0) {
+			if weight == 0 {
 				weight = 1
 			}
 
