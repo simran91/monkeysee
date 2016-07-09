@@ -27,8 +27,8 @@ func main() {
 			"rgb.png",
 			"rgb.jpg",
 			"rgb.gif",
-			// "forest.png",
-			// "flower.jpg",
+			"forest.png",
+			"flower.jpg",
 		}
 	}
 
@@ -59,7 +59,7 @@ func getFunctionName(i interface{}) string {
 }
 
 // call the correct mod function as required...
-func runMod(modfunc func(string, string, monkey.ImageMatrix) monkey.ImageMatrix,
+func runMod(modfunc func(string, string, monkey.ImageMatrix, ...interface{}) monkey.ImageMatrix,
 	destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) {
 	// Get the function name so that we can use it in the directory/filenames we create...
 	modName := getFunctionName(modfunc)
@@ -74,7 +74,7 @@ func runMod(modfunc func(string, string, monkey.ImageMatrix) monkey.ImageMatrix,
 	util.CheckError(err)
 
 	// Call the actual mod func and create the new image...
-	newColourMatrix := modfunc(destDir, destFileInit, colourMatrix)
+	newColourMatrix := modfunc(destDir, destFileInit, colourMatrix, vars...)
 	newImage := monkey.ColourMatrixToImage(newColourMatrix)
 
 	// Save as PNG
@@ -98,7 +98,7 @@ func runMod(modfunc func(string, string, monkey.ImageMatrix) monkey.ImageMatrix,
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: SwapRGBtoGBR
 //
-func modSwapRGBtoGBR(destDir, destFileInit string, colourMatrix monkey.ImageMatrix) monkey.ImageMatrix {
+func modSwapRGBtoGBR(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
 	newColourMatrix := mods.SwapRGBtoGBR(colourMatrix)
 	return newColourMatrix
 }
@@ -106,7 +106,7 @@ func modSwapRGBtoGBR(destDir, destFileInit string, colourMatrix monkey.ImageMatr
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: GreyscaleAverageWithTranslusence
 //
-func modGreyscaleAverageWithTranslusence(destDir, destFileInit string, colourMatrix monkey.ImageMatrix) monkey.ImageMatrix {
+func modGreyscaleAverageWithTranslusence(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
 	newColourMatrix := mods.GreyscaleAverageWithTranslusence(colourMatrix)
 	return newColourMatrix
 }
@@ -114,8 +114,8 @@ func modGreyscaleAverageWithTranslusence(destDir, destFileInit string, colourMat
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: Blur
 //
-func modBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix) monkey.ImageMatrix {
-	blurAmount := 8
+func modBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+	blurAmount := vars[0].(int)
 	newColourMatrix := mods.Blur(colourMatrix, blurAmount)
 	return newColourMatrix
 }
@@ -123,8 +123,8 @@ func modBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix) monk
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: modBlurWithKernelMethod
 //
-func modBlurWithKernelMethod(destDir, destFileInit string, colourMatrix monkey.ImageMatrix) monkey.ImageMatrix {
-	blurAmount := 8
+func modBlurWithKernelMethod(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+	blurAmount := vars[0].(int)
 	newColourMatrix := mods.BlurWithKernelMethod(colourMatrix, blurAmount)
 	return newColourMatrix
 }
@@ -132,7 +132,7 @@ func modBlurWithKernelMethod(destDir, destFileInit string, colourMatrix monkey.I
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: modGaussianBlur
 //
-func modGaussianBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix) monkey.ImageMatrix {
+func modGaussianBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
 	newColourMatrix := mods.GaussianBlur(colourMatrix)
 	return newColourMatrix
 }
@@ -140,7 +140,7 @@ func modGaussianBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatr
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: modAverageBlur
 //
-func modAverageBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix) monkey.ImageMatrix {
+func modAverageBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
 	newColourMatrix := mods.AverageBlur(colourMatrix)
 	return newColourMatrix
 }
