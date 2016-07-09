@@ -69,12 +69,11 @@ func (im ImageMatrix) ApplyConvolution(cm ConvolutionMatrix) ImageMatrix {
 }
 
 //
-// ApplyConvolutionWithRedInfluenceSampleFunction apply's a convolution matrix to the current image but weights
-// the matrix entries for each pixel by giving further away red pixels more of an influence on the pixel being
-// modified
+// ApplyConvolutionWithSampleFunction apply's a weights to the convolution matrix (in addition to the weights
+// in the matrix, based on the return values of the function)
 //
-func (im ImageMatrix) ApplyConvolutionWithRedInfluenceSampleFunction(cm ConvolutionMatrix) ImageMatrix {
-	return im.ApplyConvolutionFunction(cm, convolutionMatrixFartherAwayBrightRedNeighboursInfluencesMore)
+func (im ImageMatrix) ApplyConvolutionWithSampleFunction(cm ConvolutionMatrix) ImageMatrix {
+	return im.ApplyConvolutionFunction(cm, convolutionMatrixSampleFunction)
 }
 
 //
@@ -90,10 +89,10 @@ func (im ImageMatrix) ApplyConvolutionWithRedInfluenceSampleFunction(cm Convolut
 // *****************************************************************************
 // TODO: So much work to be done in this one... with the function that we are calling, we should
 // pass in a LOT more information, like where we are in reference to the full image as that may influence
-// what happens (eg. we might have an image that is blurred on the edges but sharp in the middle) 
+// what happens (eg. we might have an image that is blurred on the edges but sharp in the middle)
 // *****************************************************************************
 // *****************************************************************************
-func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc func(color.RGBA, float64) float64) ImageMatrix {
+func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc func(ImageMatrix, int, int, int, int, color.RGBA, float64) float64) ImageMatrix {
 	cmWidth := len(cm)
 	cmHeight := len(cm[0])
 
@@ -137,7 +136,7 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
 					}
 
 					//
-					kernelColour := colour.(color.RGBA)
+					kernelPixelColour := colour.(color.RGBA)
 
 					// get the distance of the current pixel compared to the centre of the kernel
 					// the centre one is the one we are modifying and saving to a new image/matrix of course...
@@ -148,14 +147,14 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
                     // We are multipling it by the weight in the convolution matrix as that way you can
                     // control an aspect of the weight through the matrix as well (as well as the function that
                     // we pass in of course :)
-					cmValue := conFunc(kernelColour, distance) * float64(cm[i][j])
+					cmValue := conFunc(im, x, y, i, j, kernelPixelColour, distance) * float64(cm[i][j])
 
 					// apply the influence / weight ... (eg. if cmValue was 0, then the current pixel would have
 					// no influence over the pixel we are changing, if it was large in comparision to what we return
 					// for the other kernel pixels, then it will have a large influence)
-					redTotal += float64(kernelColour.R) * cmValue
-					greenTotal += float64(kernelColour.G) * cmValue
-					blueTotal += float64(kernelColour.B) * cmValue
+					redTotal += float64(kernelPixelColour.R) * cmValue
+					greenTotal += float64(kernelPixelColour.G) * cmValue
+					blueTotal += float64(kernelPixelColour.B) * cmValue
 					weight += cmValue
 				}
 			}
@@ -181,30 +180,12 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
 	return newMatrix
 }
 
-func dontModifyConvolutionMatrixWeights(colour color.RGBA, distance float64) float64 {
-	//
-	// if (colour.G > 100 && distance > 5) {
-	// 	return 1
-	// }
-	//
-	// return 0
-
+func dontModifyConvolutionMatrixWeights(im ImageMatrix, imagePositionX int, imagePositionY int, kernelPixelX int, kernelPixel int, colour color.RGBA, distance float64) float64 {
 	return 1
 
-	// if (distance == 0) {
-	// 	// fmt.Println("distance is 0")
-	// 	return 0
-	// }
-	// // } else if (distance < 1) {
-	// // 	return 20
-	// // } else if (distance < 2) {
-	// // 	return 80
-	// // }
-	//
-	// return 160
 }
 
-func convolutionMatrixFartherAwayBrightRedNeighboursInfluencesMore (colour color.RGBA, distance float64) float64 {
+func convolutionMatrixSampleFunction(im ImageMatrix, imagePositionX int, imagePositionY int, kernelPixelX int, kernelPixel int, colour color.RGBA, distance float64) float64 {
 	if (distance < 2) {
 		return 0
 	}
