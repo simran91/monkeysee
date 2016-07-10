@@ -5,7 +5,7 @@ full: clearscreen clean main-full
 flower: clearscreen main-flower
 
 main-quick:
-	@go run main.go rgb.png 10x10white.png
+	@go run main.go rgb.png forest.png
 	@echo ""
 	@echo ""
 
