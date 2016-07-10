@@ -3,7 +3,7 @@ package monkey
 //
 // ConvolutionMatrix defines how we store our convolution matrices...
 //
-type ConvolutionMatrix [][]uint8
+type ConvolutionMatrix [][]int8
 
 //
 // GetWidth returns the height of the image

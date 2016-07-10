@@ -169,18 +169,45 @@ func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []
 		}
 	}
 
-	//
+	// If the convolution matrix normalised itself; aka, say it was something like:
+	//                                                                             { 0 -1  0}
+	//                                                                             {-1  4 -1}
+	//                                                                             { 0 -1  0}
+	// then adding the entries (4 + (-1) + (-1) + (-1) + (-1)) results in a zero, in which case we leave
+	// the weights alone (by setting the weight to divide by to 1) (aka, the weights do not have an impact,
+	// but the pixels with a weight more more or less than 0 still do have an impact on the pixel
+	// we are changing of course)
 	if weight == 0 {
 		weight = 1
 	}
 
-	//
-	newRedValue := uint8(redTotal / weight)
-	newGreenValue := uint8(greenTotal / weight)
-	newBlueValue := uint8(blueTotal / weight)
+	// Normalise the values (based on the weight (total's in the matrix))
+	newRedValue := redTotal / weight
+	newGreenValue := greenTotal / weight
+	newBlueValue := blueTotal / weight
+
+	// If the values are "out of range" (outside the colour range of 0-255) then set them to 0 (absence of that
+	// colour) if they were negative or 255 (100% of that colour) if they were greater than the max allowed.
+	if (newRedValue < 0) {
+		newRedValue = 0
+	} else if (newRedValue > 255) {
+		newRedValue = 255
+	}
+
+	if (newGreenValue < 0) {
+		newGreenValue = 0
+	} else if (newGreenValue > 255) {
+		newGreenValue = 255
+	}
+
+	if (newBlueValue < 0) {
+		newBlueValue = 0
+	} else if (newBlueValue > 255) {
+		newBlueValue = 255
+	}
 
 	// Assign the new values to the pixel in the column 'column' at position y
-	column[y] = color.RGBA{newRedValue, newGreenValue, newBlueValue, currentColour.A}
+	column[y] = color.RGBA{uint8(newRedValue), uint8(newGreenValue), uint8(newBlueValue), currentColour.A}
 	// fmt.Printf("[%v,%v] %v => %v\n", x, y, currentColour, column[y])
 }
 
