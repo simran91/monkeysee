@@ -27,16 +27,16 @@ func (i *Monkey) SetRawData(data string) {
 }
 
 //
-// ColourMatrix reads in the rawdata and returns a ColourMatrix
+// ImageMatrix reads in the rawdata and returns a ImageMatrix
 //
-func (i *Monkey) ColourMatrix() ImageMatrix {
+func (i *Monkey) ImageMatrix() ImageMatrix {
 	reader := strings.NewReader(i.rawdata)
 	src, _, err := image.Decode(reader)
 	util.CheckError(err)
 
 	bounds := src.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
-	colourMatrix := ImageMatrix{}
+	imageMatrix := ImageMatrix{}
 
 	for x := bounds.Min.X; x < width; x++ {
 		column := make([]color.Color, height)
@@ -54,10 +54,10 @@ func (i *Monkey) ColourMatrix() ImageMatrix {
 			column[y] = color.RGBA{uint8(r >> 8), uint8(g >> 8), uint8(b >> 8), uint8(a >> 8)}
 		}
 
-		colourMatrix = append(colourMatrix, column)
+		imageMatrix = append(imageMatrix, column)
 	}
 
-	// debugPrintMatrix(colourMatrix)
+	// debugPrintMatrix(imageMatrix)
 
-	return colourMatrix
+	return imageMatrix
 }

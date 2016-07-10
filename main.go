@@ -24,12 +24,15 @@ func main() {
 		sourceFiles = os.Args[1:]
 	} else {
 		sourceFiles = []string{
-			"10x10white.png",
-			"rgb.png",
-			"rgb.jpg",
-			"rgb.gif",
-			"forest.png",
-			"flower.jpg",
+                                "rgb.gif",
+                                "rgb.jpg",
+                                "rgb.png",
+                                "flower.jpg",
+                                "forest.png",
+                                "gradient-rainbow.jpg",
+                                "rgb-venn-diagram.png",
+                                "sharp-leaf.jpg",
+                                "water-on-leaf.jpg",
 		}
 	}
 
@@ -44,13 +47,13 @@ func main() {
 		image := monkey.LoadImageFromFile(filepath.Join(sourceDir, sourceFile))
 		destFileInit := string(stringRegex.ReplaceAll([]byte(sourceFile), []byte{'-'}))
 
-		runMod(modSwapRGBtoGBR, destDir, destFileInit, image.ColourMatrix())
-		runMod(modGreyscaleAverageWithTranslusence, destDir, destFileInit, image.ColourMatrix())
-		runMod(modBlur, destDir, destFileInit, image.ColourMatrix(), 8)
-		runMod(modBlurWithKernelMethod, destDir, destFileInit, image.ColourMatrix(), 8)
-		runMod(modGaussianBlur, destDir, destFileInit, image.ColourMatrix())
-		runMod(modAverageBlur, destDir, destFileInit, image.ColourMatrix())
-		runMod(modApplyConvolutionWithSampleFunction, destDir, destFileInit, image.ColourMatrix())
+		runMod(modSwapRGBtoGBR, destDir, destFileInit, image.ImageMatrix())
+		runMod(modGreyscaleAverageWithTranslusence, destDir, destFileInit, image.ImageMatrix())
+		runMod(modBlur, destDir, destFileInit, image.ImageMatrix(), 8)
+		runMod(modBlurWithKernelMethod, destDir, destFileInit, image.ImageMatrix(), 8)
+		runMod(modGaussianBlur, destDir, destFileInit, image.ImageMatrix())
+		runMod(modAverageBlur, destDir, destFileInit, image.ImageMatrix())
+		runMod(modApplyConvolutionWithSampleFunction, destDir, destFileInit, image.ImageMatrix())
 	}
 }
 
@@ -61,7 +64,7 @@ func getFunctionName(i interface{}) string {
 
 // call the correct mod function as required...
 func runMod(modfunc func(string, string, monkey.ImageMatrix, ...interface{}) monkey.ImageMatrix,
-	destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) {
+	destDir, destFileInit string, imageMatrix monkey.ImageMatrix, vars ...interface{}) {
 	// Get the function name so that we can use it in the directory/filenames we create...
 	modName := getFunctionName(modfunc)
 	modName = strings.Replace(modName, "main.mod", "", 1)
@@ -75,8 +78,8 @@ func runMod(modfunc func(string, string, monkey.ImageMatrix, ...interface{}) mon
 	util.CheckError(err)
 
 	// Call the actual mod func and create the new image...
-	newColourMatrix := modfunc(destDir, destFileInit, colourMatrix, vars...)
-	newImage := monkey.ColourMatrixToImage(newColourMatrix)
+	newImageMatrix := modfunc(destDir, destFileInit, imageMatrix, vars...)
+	newImage := monkey.ImageMatrixToImage(newImageMatrix)
 
 	// Save as PNG
 	destImage := filepath.Join(destDir, destFileInit+"-to-png.png")
@@ -99,57 +102,57 @@ func runMod(modfunc func(string, string, monkey.ImageMatrix, ...interface{}) mon
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: SwapRGBtoGBR
 //
-func modSwapRGBtoGBR(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
-	newColourMatrix := mods.SwapRGBtoGBR(colourMatrix)
-	return newColourMatrix
+func modSwapRGBtoGBR(destDir, destFileInit string, imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+	newImageMatrix := mods.SwapRGBtoGBR(imageMatrix)
+	return newImageMatrix
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: GreyscaleAverageWithTranslusence
 //
-func modGreyscaleAverageWithTranslusence(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
-	newColourMatrix := mods.GreyscaleAverageWithTranslusence(colourMatrix)
-	return newColourMatrix
+func modGreyscaleAverageWithTranslusence(destDir, destFileInit string, imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+	newImageMatrix := mods.GreyscaleAverageWithTranslusence(imageMatrix)
+	return newImageMatrix
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: Blur
 //
-func modBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+func modBlur(destDir, destFileInit string, imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
 	blurAmount := vars[0].(int)
-	newColourMatrix := mods.Blur(colourMatrix, blurAmount)
-	return newColourMatrix
+	newImageMatrix := mods.Blur(imageMatrix, blurAmount)
+	return newImageMatrix
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: modBlurWithKernelMethod
 //
-func modBlurWithKernelMethod(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+func modBlurWithKernelMethod(destDir, destFileInit string, imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
 	blurAmount := vars[0].(int)
-	newColourMatrix := mods.BlurWithKernelMethod(colourMatrix, blurAmount)
-	return newColourMatrix
+	newImageMatrix := mods.BlurWithKernelMethod(imageMatrix, blurAmount)
+	return newImageMatrix
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: modGaussianBlur
 //
-func modGaussianBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
-	newColourMatrix := mods.GaussianBlur(colourMatrix)
-	return newColourMatrix
+func modGaussianBlur(destDir, destFileInit string, imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+	newImageMatrix := mods.GaussianBlur(imageMatrix)
+	return newImageMatrix
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: modAverageBlur
 //
-func modAverageBlur(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
-	newColourMatrix := mods.AverageBlur(colourMatrix)
-	return newColourMatrix
+func modAverageBlur(destDir, destFileInit string, imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+	newImageMatrix := mods.AverageBlur(imageMatrix)
+	return newImageMatrix
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // mod: modApplyConvolutionWithSampleFunction
 //
-func modApplyConvolutionWithSampleFunction(destDir, destFileInit string, colourMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
-	newColourMatrix := mods.ApplyConvolutionWithSampleFunction(colourMatrix)
-	return newColourMatrix
+func modApplyConvolutionWithSampleFunction(destDir, destFileInit string, imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+	newImageMatrix := mods.ApplyConvolutionWithSampleFunction(imageMatrix)
+	return newImageMatrix
 }

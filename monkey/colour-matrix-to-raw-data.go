@@ -6,10 +6,10 @@ import (
 )
 
 //
-// ColourMatrixToImage converts our ImageMatrix to an image.Image so that we can then save it
+// ImageMatrixToImage converts our ImageMatrix to an image.Image so that we can then save it
 // to a file (or call other functions/methods on it that the image package provides), etc...
 //
-func ColourMatrixToImage(imageMatrix ImageMatrix) image.Image {
+func ImageMatrixToImage(imageMatrix ImageMatrix) image.Image {
 	// *****************************************************************************
 	// *****************************************************************************
 	// TODO: We are taking the width and height of the image from a sample taken.

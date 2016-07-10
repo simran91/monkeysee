@@ -1,6 +1,6 @@
 default: clearscreen main-quick
 
-full: clearscreen main-full
+full: clearscreen clean main-full
 
 flower: clearscreen main-flower
 
