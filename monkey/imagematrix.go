@@ -5,9 +5,21 @@ import "log"
 import "math"
 
 //
-// ImageMatrix defines how we store our matrix of Colours...
+// ImageMatrix defines how we store our matrix of colours...
 //
 type ImageMatrix [][]color.Color
+
+// ApplyFunctionToEveryPixel applys the given function to every pixel in the image
+// (the function is passed the current pixel colour)
+//
+func (im ImageMatrix) ApplyFunctionToEveryPixel(modFunc func(ImageMatrix, int, int) color.RGBA) {
+	for x, column := range im {
+		for y := range column {
+			c := modFunc(im, x, y)
+			im[x][y] = c
+		}
+	}
+}
 
 // GetKernelMatrix returns an ImageMatrix around the pixel (x,y) based on the size of the kernel we requested
 // eg. A GetKernelMatrix(5, 5, 1) will return an ImageMatrix that is built from the
