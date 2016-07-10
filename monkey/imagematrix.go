@@ -133,14 +133,14 @@ func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []
 
 	kernelMatrix := im.GetKernelMatrix(x, y, cmSize)
 
-	for i, column := range kernelMatrix {
-		for j, colour := range column {
-			if colour == nil {
+	for i, kernelColumn := range kernelMatrix {
+		for j, kernelPixelColour := range kernelColumn {
+			if kernelPixelColour == nil {
 				continue
 			}
 
 			//
-			kernelPixelColour := colour.(color.RGBA)
+			kernelPixelColourRGBA := kernelPixelColour.(color.RGBA)
 
 			// get the distance of the current pixel compared to the centre of the kernel
 			// the centre one is the one we are modifying and saving to a new image/matrix of course...
@@ -151,14 +151,14 @@ func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []
 			// We are multipling it by the weight in the convolution matrix as that way you can
 			// control an aspect of the weight through the matrix as well (as well as the function that
 			// we pass in of course :)
-			cmValue := conFunc(im, x, y, i, j, kernelPixelColour, distance) * int(cm[i][j])
+			cmValue := conFunc(im, x, y, i, j, kernelPixelColourRGBA, distance) * int(cm[i][j])
 
 			// apply the influence / weight ... (eg. if cmValue was 0, then the current pixel would have
 			// no influence over the pixel we are changing, if it was large in comparision to what we return
 			// for the other kernel pixels, then it will have a large influence)
-			redTotal += int(kernelPixelColour.R) * cmValue
-			greenTotal += int(kernelPixelColour.G) * cmValue
-			blueTotal += int(kernelPixelColour.B) * cmValue
+			redTotal += int(kernelPixelColourRGBA.R) * cmValue
+			greenTotal += int(kernelPixelColourRGBA.G) * cmValue
+			blueTotal += int(kernelPixelColourRGBA.B) * cmValue
 			weight += cmValue
 		}
 	}
@@ -173,6 +173,7 @@ func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []
 	newGreenValue := uint8(greenTotal / weight)
 	newBlueValue := uint8(blueTotal / weight)
 
+	// Assign the new values to the pixel in the column 'column' at position y
 	column[y] = color.RGBA{newRedValue, newGreenValue, newBlueValue, currentColour.A}
 	// fmt.Printf("[%v,%v] %v => %v\n", x, y, currentColour, column[y])
 }
