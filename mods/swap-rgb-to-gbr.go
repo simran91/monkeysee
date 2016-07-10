@@ -9,8 +9,8 @@ import "image/color"
 //
 func SwapRGBtoGBR(matrix monkey.ImageMatrix) monkey.ImageMatrix {
 
-	width := len(matrix)
-	height := len(matrix[0])
+	width := matrix.GetWidth()
+	height := matrix.GetHeight()
 
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
