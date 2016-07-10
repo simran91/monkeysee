@@ -12,7 +12,7 @@ func ApplyFunctionToEveryPixelExample(matrix monkey.ImageMatrix) monkey.ImageMat
 }
 
 func rgb2brg(im monkey.ImageMatrix, x, y int) color.RGBA {
-    c := im[x][y].(color.RGBA)
+    c := im[x][y]
     c.R, c.G, c.B = c.B, c.R, c.G
 	return c
 }

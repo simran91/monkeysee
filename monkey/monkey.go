@@ -39,7 +39,7 @@ func (i *Monkey) ImageMatrix() ImageMatrix {
 	imageMatrix := ImageMatrix{}
 
 	for x := bounds.Min.X; x < width; x++ {
-		column := make([]color.Color, height)
+		column := make([]color.RGBA, height)
 
 		for y := bounds.Min.Y; y < height; y++ {
 			colour := src.At(x, y)

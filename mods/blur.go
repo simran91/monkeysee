@@ -3,8 +3,6 @@ package mods
 import "../monkey"
 import "image/color"
 
-// import "fmt"
-
 //
 // Blur is a mod that blur's the image... it uses "kernel convolution". THe blurAmount determines the size
 // of the kernel as we look at the pixels 'blurAmount' either side of the current pixel.
@@ -26,13 +24,13 @@ func Blur(matrix monkey.ImageMatrix, blurAmount int) monkey.ImageMatrix {
 
 	// for each row of the image...
 	for x := 0; x < width; x++ {
-		column := make([]color.Color, height)
+		column := make([]color.RGBA, height)
 		// for each column of the image...
 		for y := 0; y < height; y++ {
 
 			// look at the current pixel so that we can use it's values as the initial values of the
 			// new pixel in it's place
-			currentColour := matrix[x][y].(color.RGBA)
+			currentColour := matrix[x][y]
 			redTotal := int(currentColour.R)
 			greenTotal := int(currentColour.G)
 			blueTotal := int(currentColour.B)
@@ -52,7 +50,7 @@ func Blur(matrix monkey.ImageMatrix, blurAmount int) monkey.ImageMatrix {
 					}
 
 					// fmt.Println("x, y, i, j:", x, y, i, j)
-					colour := matrix[i][j].(color.RGBA)
+					colour := matrix[i][j]
 					redTotal += int(colour.R)
 					greenTotal += int(colour.G)
 					blueTotal += int(colour.B)

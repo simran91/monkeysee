@@ -2,8 +2,6 @@ package mods
 
 import "../monkey"
 
-// import "image/color"
-
 // ApplyConvolutionWithSampleFunction ...
 var ApplyConvolutionWithSampleFunctionMatrix = monkey.ConvolutionMatrix{
 	{1, 1, 1, 1, 1},

@@ -7,7 +7,7 @@ import "math"
 //
 // ImageMatrix defines how we store our matrix of colours...
 //
-type ImageMatrix [][]color.Color
+type ImageMatrix [][]color.RGBA
 
 // ApplyFunctionToEveryPixel applys the given function to every pixel in the image
 // (the function is passed the current pixel colour)
@@ -46,7 +46,7 @@ func (im ImageMatrix) GetKernelMatrix(origX, origY, size int) ImageMatrix {
 
 	for i := (origX - size); i <= (origX + size); i++ {
 		kernelY := 0
-		column := make([]color.Color, (2*size + 1))
+		column := make([]color.RGBA, (2*size + 1))
 
 		if i < 0 || i >= width {
 			kernelMatrix = append(kernelMatrix, column)
@@ -116,7 +116,7 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
 	//
 	// for each row of the image...
 	for x := 0; x < imWidth; x++ {
-		column := make([]color.Color, imHeight)
+		column := make([]color.RGBA, imHeight)
 		// for each column of the image...
 
 		for y := 0; y < imHeight; y++ {
@@ -136,8 +136,8 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
 //
 //
 //
-func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []color.Color, cm ConvolutionMatrix, conFunc func(ImageMatrix, int, int, int, int, color.RGBA, float64) int) {
-	currentColour := im[x][y].(color.RGBA)
+func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []color.RGBA, cm ConvolutionMatrix, conFunc func(ImageMatrix, int, int, int, int, color.RGBA, float64) int) {
+	currentColour := im[x][y]
 	redTotal := 0
 	greenTotal := 0
 	blueTotal := 0
@@ -147,12 +147,6 @@ func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []
 
 	for i, kernelColumn := range kernelMatrix {
 		for j, kernelPixelColour := range kernelColumn {
-			if kernelPixelColour == nil {
-				continue
-			}
-
-			//
-			kernelPixelColourRGBA := kernelPixelColour.(color.RGBA)
 
 			// get the distance of the current pixel compared to the centre of the kernel
 			// the centre one is the one we are modifying and saving to a new image/matrix of course...
@@ -163,14 +157,14 @@ func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []
 			// We are multipling it by the weight in the convolution matrix as that way you can
 			// control an aspect of the weight through the matrix as well (as well as the function that
 			// we pass in of course :)
-			cmValue := conFunc(im, x, y, i, j, kernelPixelColourRGBA, distance) * int(cm[i][j])
+			cmValue := conFunc(im, x, y, i, j, kernelPixelColour, distance) * int(cm[i][j])
 
 			// apply the influence / weight ... (eg. if cmValue was 0, then the current pixel would have
 			// no influence over the pixel we are changing, if it was large in comparision to what we return
 			// for the other kernel pixels, then it will have a large influence)
-			redTotal += int(kernelPixelColourRGBA.R) * cmValue
-			greenTotal += int(kernelPixelColourRGBA.G) * cmValue
-			blueTotal += int(kernelPixelColourRGBA.B) * cmValue
+			redTotal += int(kernelPixelColour.R) * cmValue
+			greenTotal += int(kernelPixelColour.G) * cmValue
+			blueTotal += int(kernelPixelColour.B) * cmValue
 			weight += cmValue
 		}
 	}

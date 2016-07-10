@@ -2,8 +2,6 @@ package mods
 
 import "../monkey"
 
-// import "image/color"
-
 // AverageBlurConvolution ...
 // var AverageBlurConvolution = monkey.ConvolutionMatrix{
 // 	{1, 1, 1, 1, 1, 1, 1},

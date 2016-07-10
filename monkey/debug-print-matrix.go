@@ -2,6 +2,7 @@ package monkey
 
 import "fmt"
 
+// 
 // debugPrintData prints the RGBAMatrix to STDOUT...
 //
 func debugPrintMatrix(matrix ImageMatrix) {

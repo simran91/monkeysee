@@ -1,7 +1,6 @@
 package mods
 
 import "../monkey"
-import "image/color"
 
 //
 // SwapRGBtoGBR is a mod that swaps the colours around... it's a very simple mod designed
@@ -14,7 +13,7 @@ func SwapRGBtoGBR(matrix monkey.ImageMatrix) monkey.ImageMatrix {
 
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
-			colour := matrix[x][y].(color.RGBA)
+			colour := matrix[x][y]
 			colour.R, colour.G, colour.B = colour.G, colour.B, colour.R
 			matrix[x][y] = colour
 		}

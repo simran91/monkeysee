@@ -15,13 +15,13 @@ func BlurWithKernelMethod(matrix monkey.ImageMatrix, blurAmount int) monkey.Imag
 
 	// for each row of the image...
 	for x := 0; x < width; x++ {
-		column := make([]color.Color, height)
+		column := make([]color.RGBA, height)
 		// for each column of the image...
 		for y := 0; y < height; y++ {
 
 			// look at the current pixel so that we can use it's values as the initial values of the
 			// new pixel in it's place
-			currentColour := matrix[x][y].(color.RGBA)
+			currentColour := matrix[x][y]
 			redTotal := int(currentColour.R)
 			greenTotal := int(currentColour.G)
 			blueTotal := int(currentColour.B)
@@ -31,11 +31,7 @@ func BlurWithKernelMethod(matrix monkey.ImageMatrix, blurAmount int) monkey.Imag
 
 			for _, column := range kernelMatrix {
 				for _, colour := range column {
-					if colour == nil {
-						continue
-					}
-
-					c := colour.(color.RGBA)
+					c := colour
 					redTotal += int(c.R)
 					greenTotal += int(c.G)
 					blueTotal += int(c.B)

@@ -2,7 +2,6 @@ package monkey
 
 import (
 	"image"
-	"image/color"
 )
 
 //
@@ -19,8 +18,8 @@ func ImageMatrixToImage(imageMatrix ImageMatrix) image.Image {
 	// *****************************************************************************
 	// *****************************************************************************
 
-	width := len(imageMatrix)
-	height := len(imageMatrix[0])
+	width := imageMatrix.GetWidth()
+	height := imageMatrix.GetHeight()
 
 	//
 	// Create a new image.Image...
@@ -29,16 +28,7 @@ func ImageMatrixToImage(imageMatrix ImageMatrix) image.Image {
 
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
-
-			value := imageMatrix[x][y]
-			colour := color.RGBA{}
-
-			if value == nil {
-				colour = color.RGBA{0, 0, 0, 0}
-			} else {
-				colour = value.(color.RGBA)
-			}
-
+			colour := imageMatrix[x][y]
 			newImage.SetRGBA(x, y, colour)
 		}
 	}

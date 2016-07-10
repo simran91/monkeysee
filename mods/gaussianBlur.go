@@ -2,8 +2,6 @@ package mods
 
 import "../monkey"
 
-// import "image/color"
-
 // GaussianBlurConvolution ...
 var GaussianBlurConvolution = monkey.ConvolutionMatrix{
 	{1, 2, 1},
