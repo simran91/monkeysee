@@ -107,10 +107,15 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
 		column := make([]color.Color, imHeight)
 		// for each column of the image...
 
-		applyConvolutionToColumn(im, x, cmSize, column, cm, conFunc)
+		for y := 0; y < imHeight; y++ {
+			// look at the current pixel so that we can use it's values as the initial values of the
+			// new pixel in it's place
+			applyConvolutionToPixel(im, x, y, cmSize, column, cm, conFunc)
+		}
 
 		// fmt.Println("Column:", column)
 		newMatrix = append(newMatrix, column)
+
 	}
 
 	return newMatrix
@@ -119,63 +124,57 @@ func (im ImageMatrix) ApplyConvolutionFunction(cm ConvolutionMatrix, conFunc fun
 //
 //
 //
-func applyConvolutionToColumn(im ImageMatrix, x int, cmSize int, column []color.Color, cm ConvolutionMatrix, conFunc func(ImageMatrix, int, int, int, int, color.RGBA, float64) int) {
-	imHeight := im.GetHeight()
+func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []color.Color, cm ConvolutionMatrix, conFunc func(ImageMatrix, int, int, int, int, color.RGBA, float64) int) {
+	currentColour := im[x][y].(color.RGBA)
+	redTotal := 0
+	greenTotal := 0
+	blueTotal := 0
+	weight := 0
 
-			for y := 0; y < imHeight; y++ {
-				// look at the current pixel so that we can use it's values as the initial values of the
-				// new pixel in it's place
-				currentColour := im[x][y].(color.RGBA)
-				redTotal := 0
-				greenTotal := 0
-				blueTotal := 0
-				weight := 0
+	kernelMatrix := im.GetKernelMatrix(x, y, cmSize)
 
-				kernelMatrix := im.GetKernelMatrix(x, y, cmSize)
-
-				for i, column := range kernelMatrix {
-					for j, colour := range column {
-						if colour == nil {
-							continue
-						}
-
-						//
-						kernelPixelColour := colour.(color.RGBA)
-
-						// get the distance of the current pixel compared to the centre of the kernel
-						// the centre one is the one we are modifying and saving to a new image/matrix of course...
-						distance := math.Sqrt(math.Pow(float64(cmSize-i), 2) + math.Pow(float64(cmSize-j), 2))
-
-						// Call the function the user passed and get the return weight of how much influence
-						// it should have over the centre pixel we want to change
-	                    // We are multipling it by the weight in the convolution matrix as that way you can
-	                    // control an aspect of the weight through the matrix as well (as well as the function that
-	                    // we pass in of course :)
-						cmValue := conFunc(im, x, y, i, j, kernelPixelColour, distance) * int(cm[i][j])
-
-						// apply the influence / weight ... (eg. if cmValue was 0, then the current pixel would have
-						// no influence over the pixel we are changing, if it was large in comparision to what we return
-						// for the other kernel pixels, then it will have a large influence)
-						redTotal += int(kernelPixelColour.R) * cmValue
-						greenTotal += int(kernelPixelColour.G) * cmValue
-						blueTotal += int(kernelPixelColour.B) * cmValue
-						weight += cmValue
-					}
-				}
-
-				//
-				if weight == 0 {
-					weight = 1
-				}
-
-				//
-				newRedValue := uint8(redTotal / weight)
-				newGreenValue := uint8(greenTotal / weight)
-				newBlueValue := uint8(blueTotal / weight)
-
-				column[y] = color.RGBA{newRedValue, newGreenValue, newBlueValue, currentColour.A}
-				// fmt.Printf("[%v,%v] %v => %v : %v\n", x, y, currentColour, column[y], redTotal)
+	for i, column := range kernelMatrix {
+		for j, colour := range column {
+			if colour == nil {
+				continue
 			}
+
+			//
+			kernelPixelColour := colour.(color.RGBA)
+
+			// get the distance of the current pixel compared to the centre of the kernel
+			// the centre one is the one we are modifying and saving to a new image/matrix of course...
+			distance := math.Sqrt(math.Pow(float64(cmSize-i), 2) + math.Pow(float64(cmSize-j), 2))
+
+			// Call the function the user passed and get the return weight of how much influence
+			// it should have over the centre pixel we want to change
+			// We are multipling it by the weight in the convolution matrix as that way you can
+			// control an aspect of the weight through the matrix as well (as well as the function that
+			// we pass in of course :)
+			cmValue := conFunc(im, x, y, i, j, kernelPixelColour, distance) * int(cm[i][j])
+
+			// apply the influence / weight ... (eg. if cmValue was 0, then the current pixel would have
+			// no influence over the pixel we are changing, if it was large in comparision to what we return
+			// for the other kernel pixels, then it will have a large influence)
+			redTotal += int(kernelPixelColour.R) * cmValue
+			greenTotal += int(kernelPixelColour.G) * cmValue
+			blueTotal += int(kernelPixelColour.B) * cmValue
+			weight += cmValue
+		}
+	}
+
+	//
+	if weight == 0 {
+		weight = 1
+	}
+
+	//
+	newRedValue := uint8(redTotal / weight)
+	newGreenValue := uint8(greenTotal / weight)
+	newBlueValue := uint8(blueTotal / weight)
+
+	column[y] = color.RGBA{newRedValue, newGreenValue, newBlueValue, currentColour.A}
+	// fmt.Printf("[%v,%v] %v => %v\n", x, y, currentColour, column[y])
 }
 
 //

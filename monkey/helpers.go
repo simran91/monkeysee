@@ -14,11 +14,11 @@ func dontModifyConvolutionMatrixWeights(im ImageMatrix, imagePositionX int, imag
 // This is a sample function that we can look up, just to see an example...
 //
 func convolutionMatrixSampleFunction(im ImageMatrix, imagePositionX int, imagePositionY int, kernelPixelX int, kernelPixel int, colour color.RGBA, distance float64) int {
-	if (distance < 1) {
+	if distance < 1 {
 		return 1
 	}
 
-	if (colour.R > 150 && colour.G < 100 && colour.B < 100) {
+	if colour.R > 150 && colour.G < 100 && colour.B < 100 {
 		return int(5 * distance)
 	}
 

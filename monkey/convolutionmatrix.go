@@ -1,11 +1,9 @@
 package monkey
 
-
 //
 // ConvolutionMatrix defines how we store our convolution matrices...
 //
 type ConvolutionMatrix [][]uint8
-
 
 //
 // GetWidth returns the height of the image
@@ -20,4 +18,3 @@ func (cm ConvolutionMatrix) GetWidth() int {
 func (cm ConvolutionMatrix) GetHeight() int {
 	return len(cm[0])
 }
-
