@@ -46,6 +46,8 @@ func main() {
 		runMod(modEdgeDetect, destDir, monkey.ImageMatrix())
 		runMod(modEmboss, destDir, monkey.ImageMatrix())
 		runMod(modIdentity, destDir, monkey.ImageMatrix())
+		runMod(modPlayOne, destDir, monkey.ImageMatrix())
+		runMod(modPlayTwo, destDir, monkey.ImageMatrix())
 	}
 }
 
@@ -185,5 +187,21 @@ func modEmboss(imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.Image
 //
 func modIdentity(imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
 	newImageMatrix := mods.Identity(imageMatrix)
+	return newImageMatrix
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// mod: modApplyFunctionToEveryPixelExample
+//
+func modPlayOne(imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+	newImageMatrix := mods.PlayOne(imageMatrix)
+	return newImageMatrix
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// mod: modApplyFunctionToEveryPixelExample
+//
+func modPlayTwo(imageMatrix monkey.ImageMatrix, vars ...interface{}) monkey.ImageMatrix {
+	newImageMatrix := mods.PlayTwo(imageMatrix)
 	return newImageMatrix
 }
