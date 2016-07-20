@@ -3,27 +3,27 @@ default: clearscreen main-quick
 full: clearscreen clean main-full
 
 main-quick:
-	@cd samples && go run ../monkeysee.go rgb.png 
+	@cd samples && go run ../main.go rgb.png 
 	@echo ""
 	@echo ""
 
 main-full:
-	@cd samples && go run ../monkeysee.go *.png *.jpg *.gif
+	@cd samples && go run ../main.go *.png *.jpg *.gif
 	@echo ""
 	@echo ""
 
 flower: clearscreen
-	@cd samples && go run ../monkeysee.go flower.jpg
+	@cd samples && go run ../main.go flower.jpg
 	@echo ""
 	@echo ""
 
 forest: clearscreen
-	@cd samples && go run ../monkeysee.go forest.png
+	@cd samples && go run ../main.go forest.png
 	@echo ""
 	@echo ""
 
 png: clearscreen
-	@cd samples && go run ../monkeysee.go *.png
+	@cd samples && go run ../main.go *.png
 	@echo ""
 	@echo ""
 
