@@ -22,8 +22,8 @@ func main() {
 	if len(os.Args) > 1 {
 		sourceFiles = os.Args[1:]
 	} else {
-        fmt.Printf("Usage: monkeysee [files...]")
-        os.Exit(1)
+		fmt.Printf("Usage: monkeysee [files...]")
+		os.Exit(1)
 	}
 
 	for _, sourceFile := range sourceFiles {

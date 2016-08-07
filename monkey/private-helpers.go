@@ -27,19 +27,18 @@ func convolutionMatrixSampleFunction(im ImageMatrix, imagePositionX int, imagePo
 	return 5
 }
 
-
 //
 // Easier to write debug("...") than have to import fmt.Println in every file i want to just print something from for debugging purposes...
 //
 func debug(v ...interface{}) {
-    fmt.Println(v...)
+	fmt.Println(v...)
 }
 
 //
 // Handy to put in as a breakpoint in some code if i just want it to end (while debugging)...
 //
 func forcePanic() {
-    panic("picknicking... :)")
+	panic("picknicking... :)")
 }
 
 //
@@ -120,14 +119,13 @@ func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []
 	// fmt.Printf("[%v,%v] %v => %v\n", x, y, currentColour, column[y])
 }
 
-
 //
 // debugPrintData prints the RGBAMatrix to STDOUT...
 //
 func debugPrintMatrix(matrix ImageMatrix) {
-    for x, rows := range matrix {
-        for y, colour := range rows {
-            fmt.Printf("x:%v y:%v colour:%v\n", x, y, colour)
-        }
-    }
+	for x, rows := range matrix {
+		for y, colour := range rows {
+			fmt.Printf("x:%v y:%v colour:%v\n", x, y, colour)
+		}
+	}
 }

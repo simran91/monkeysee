@@ -200,7 +200,7 @@ func (im ImageMatrix) SeamCarveHorizontal() ImageMatrix {
 	// get the starting seam by going through all options that start in the first column (x=0) and getting
 	// the best possible path to start with
 	for j := 0; j < height; j++ {
-		paths = im.GetPathsHorizontal(Path{Point{0,j}}, depth)
+		paths = im.GetPathsHorizontal(Path{Point{0, j}}, depth)
 		path := im.GetLowestEnergyPath(paths)
 		startingPathOptions = append(startingPathOptions, path)
 	}
@@ -218,7 +218,6 @@ func (im ImageMatrix) SeamCarveHorizontal() ImageMatrix {
 		lowestEnergyPath := im.GetLowestEnergyPath(paths)
 		seam = lowestEnergyPath
 	}
-
 
 	// generate a new image (we don't want to modify the original image)
 	newImage := im
@@ -258,7 +257,7 @@ func (im ImageMatrix) GetEnergyOfPoint(x, y int) float64 {
 			energy += math.Abs(math.Abs(float64(cc.R) - float64(c.R)))
 			energy += math.Abs(math.Abs(float64(cc.G) - float64(c.G)))
 			energy += math.Abs(math.Abs(float64(cc.B) - float64(c.B)))
-			energy += math.Abs(math.Abs(float64(cc.A) - float64(c.A))) * 3
+			energy += math.Abs(math.Abs(float64(cc.A)-float64(c.A))) * 3
 		}
 
 	}
@@ -287,21 +286,21 @@ func (im ImageMatrix) GetPathsHorizontal(path Path, depth int) []Path {
 		if x+1 < width {
 			pathWithRightPoint := make(Path, len(path))
 			copy(pathWithRightPoint, path)
-			pathWithRightPoint = append(pathWithRightPoint, Point{x+1,y})
+			pathWithRightPoint = append(pathWithRightPoint, Point{x + 1, y})
 			paths = append(paths, pathWithRightPoint)
 		}
 
 		if x+1 < width && y-1 >= 0 {
 			pathWithDiagonalUpPoint := make(Path, len(path))
 			copy(pathWithDiagonalUpPoint, path)
-			pathWithDiagonalUpPoint = append(pathWithDiagonalUpPoint, Point{x+1, y-1})
+			pathWithDiagonalUpPoint = append(pathWithDiagonalUpPoint, Point{x + 1, y - 1})
 			paths = append(paths, pathWithDiagonalUpPoint)
 		}
 
 		if x+1 < width && y+1 < height {
 			pathWithDiagonalDownPoint := make(Path, len(path))
 			copy(pathWithDiagonalDownPoint, path)
-			pathWithDiagonalDownPoint = append(pathWithDiagonalDownPoint, Point{x+1,y+1})
+			pathWithDiagonalDownPoint = append(pathWithDiagonalDownPoint, Point{x + 1, y + 1})
 			paths = append(paths, pathWithDiagonalDownPoint)
 		}
 	} else if depth > 1 {
@@ -363,7 +362,6 @@ func (im ImageMatrix) GetLowestEnergyPath(paths []Path) Path {
 			lowestEnergyPath = path
 			lowestEnergy = pathEnergy
 		}
-
 
 	}
 
