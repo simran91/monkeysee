@@ -3,11 +3,30 @@ package monkey
 import "image/color"
 import "log"
 import "math"
+import "fmt"
+
+//
+// Point is a particular pixel position in an image
+//
+type Point struct {
+	x int
+	y int
+}
+
+//
+// Path is a row of points that are connected
+//
+type Path []Point
+
+//
+// ImageRow is a row of color.RGBA values in an imagematrix...
+//
+type ImageRow []color.RGBA
 
 //
 // ImageMatrix defines how we store our matrix of colours...
 //
-type ImageMatrix [][]color.RGBA
+type ImageMatrix []ImageRow
 
 // ApplyFunctionToEveryPixel applys the given function to every pixel in the image
 // (the function is passed the current pixel colour)
@@ -34,6 +53,15 @@ func (im ImageMatrix) ApplyFunctionToEveryPixel(modFunc func(ImageMatrix, int, i
 //
 // See https://en.wikipedia.org/wiki/Kernel_(image_processing)#Origin for how to do Gaussian Blur's,
 // Image Sharpen's, etc, etc, etc...
+//
+// If you ask for a size 1 kernel at position 0,0 (for example); you will still get a 9x9 matrix with
+// zero valued entries at the spots where the image x,y are not valid
+// eg. That would return:
+//            [c1, c2, c3]
+//            [c4, c5, c6]
+//            [c7, c8, c9]
+//     Where as c5 is the position (0,0); c1, c2, c3, c4, c7 don't make sense as they are outside the bounds
+//     of the image, so they will be set to the default of color.RGBA{}
 //
 func (im ImageMatrix) GetKernelMatrix(origX, origY, size int) ImageMatrix {
 
@@ -188,21 +216,21 @@ func applyConvolutionToPixel(im ImageMatrix, x int, y int, cmSize int, column []
 
 	// If the values are "out of range" (outside the colour range of 0-255) then set them to 0 (absence of that
 	// colour) if they were negative or 255 (100% of that colour) if they were greater than the max allowed.
-	if (newRedValue < 0) {
+	if newRedValue < 0 {
 		newRedValue = 0
-	} else if (newRedValue > 255) {
+	} else if newRedValue > 255 {
 		newRedValue = 255
 	}
 
-	if (newGreenValue < 0) {
+	if newGreenValue < 0 {
 		newGreenValue = 0
-	} else if (newGreenValue > 255) {
+	} else if newGreenValue > 255 {
 		newGreenValue = 255
 	}
 
-	if (newBlueValue < 0) {
+	if newBlueValue < 0 {
 		newBlueValue = 0
-	} else if (newBlueValue > 255) {
+	} else if newBlueValue > 255 {
 		newBlueValue = 255
 	}
 
@@ -223,4 +251,196 @@ func (im ImageMatrix) GetWidth() int {
 //
 func (im ImageMatrix) GetHeight() int {
 	return len(im[0])
+}
+
+//
+// SeamCarveHorizontal will carve the imagematrix by 1 pixel horizontally
+//
+func (im ImageMatrix) SeamCarveHorizontal() ImageMatrix {
+	height := im.GetHeight()
+	width := im.GetWidth()
+
+	depth := 5
+	var seam Path
+
+	var startingPathOptions []Path
+	var paths []Path
+
+	for j := 0; j < height - 1; j++ {
+		paths = im.getPathsHorizontal(Path{Point{0,j}}, depth)
+		path := im.getLowestEnergyPath(paths)
+		startingPathOptions = append(startingPathOptions, path)
+	}
+
+	// // paths := im.getPathsHorizontal(Path{Point{0, 190}}, depth)
+	// paths := im.getPathsHorizontal(Path{Point{0, 22}}, depth)
+
+	// for _, p := range paths {
+	// 	debug("Starting Path Options: ", p)
+	// }
+	//
+	// // fmt.Println("Starting path options are: ", paths)
+	// debug("===================================================================================================")
+
+	startingPathOptions = []Path{im.getLowestEnergyPath(paths)}
+
+	seam = im.getLowestEnergyPath(startingPathOptions)
+
+	for len(seam) < width {
+
+		if len(seam)+depth > width {
+			depth = width - len(seam)
+		}
+
+		// debug("========================================", seam)
+
+		paths := im.getPathsHorizontal(seam, depth)
+		lowestEnergyPath := im.getLowestEnergyPath(paths)
+		seam = lowestEnergyPath
+
+	}
+
+	//
+	newImage := im
+
+	for _, point := range seam {
+		newImage[point.x][point.y] = color.RGBA{255, 0, 255, 255}
+	}
+
+	//
+	//
+	//
+	return newImage
+}
+
+//
+// GetEnergyOfPixel returns the "energy" of a pixel - that is, the more different it is from it's surrounding
+// pixels, the higher it's energy
+//
+func (im ImageMatrix) GetEnergyOfPixel(x, y int) float64 {
+
+	// fmt.Println("START", x, y)
+	cc := im[x][y] // centre colour (the pixel we are trying to get the enery for)
+	// fmt.Println("END")
+
+	kernelMatrix := im.GetKernelMatrix(x, y, 1)
+	numBins := 0 // the number of bins (pixels) we will be comparing our central pixel to...
+	energy := 0.0
+
+	for _, row := range kernelMatrix {
+		for _, c := range row {
+			// ignore points where the RGBA value is 0,0,0,0 as they are probably the ones out of the image
+			// eg. they are the entries above and to the left of 0,0 (this happens because the kernelMatrix
+			// is always a square, so it returns zero'd entries for pixles that don't exist)
+			if c.R == 0 && c.G == 0 && c.B == 0 && c.A == 0 {
+				continue
+			}
+
+			// We should be doing the weight according to the Alpha channel... the close to 0 it is, the
+			// less the energy should be (as we want transparent pixels to not add much energy at all)
+			numBins++
+			energy += math.Abs(float64(cc.R - c.R))
+			energy += math.Abs(float64(cc.G - c.G))
+			energy += math.Abs(float64(cc.B - c.B))
+			energy += math.Abs(float64(cc.A-c.A)) * 3
+		}
+	}
+
+	energy = energy / float64(numBins)
+
+	// log.Printf("Energy=%v, Bins=%v x=%v y=%v", energy, numBins, x, y)
+	// debugPrintMatrix(kernelMatrix)
+	return energy
+}
+
+func (im ImageMatrix) getPathsHorizontal(path Path, depth int) []Path {
+	var paths []Path
+	height := im.GetHeight()
+	width := im.GetWidth()
+	x := path[len(path)-1].x
+	y := path[len(path)-1].y
+
+	// debug("x, y", x, y)
+
+	if depth == 1 {
+		if x+1 < width {
+			pathWithRightPixel := append(path, Point{x + 1, y})
+			paths = append(paths, pathWithRightPixel)
+		}
+
+		if x+1 < width && y-1 >= 0 {
+			pathWithdiagonalUpPixel := append(path, Point{x + 1, y - 1})
+			paths = append(paths, pathWithdiagonalUpPixel)
+		}
+
+		if x+1 < width && y+1 < height {
+			pathWithDiagonalDownPixel := append(path, Point{x + 1, y + 1})
+			paths = append(paths, pathWithDiagonalDownPixel)
+		}
+
+		// } else if (depth > 1 && x+1 <= width) {
+	} else if depth > 1 {
+		if x+1 < width {
+			pathWithRightPixel := append(path, Point{x + 1, y})
+			rightPaths := im.getPathsHorizontal(pathWithRightPixel, depth-1)
+
+			for _, rightPath := range rightPaths {
+				paths = append(paths, rightPath)
+			}
+		}
+
+		if x+1 < width && y-1 >= 0 {
+			pathWithDiagonalUpPixel := append(path, Point{x + 1, y - 1})
+			diagonalUpPaths := im.getPathsHorizontal(pathWithDiagonalUpPixel, depth-1)
+
+			for _, diagonalUpPath := range diagonalUpPaths {
+				paths = append(paths, diagonalUpPath)
+			}
+		}
+
+		if x+1 < width && y+1 < height {
+			pathWithDiagonalDownPixel := append(path, Point{x + 1, y + 1})
+			diagonalDownPaths := im.getPathsHorizontal(pathWithDiagonalDownPixel, depth-1)
+
+			for _, diagonalDownPath := range diagonalDownPaths {
+				paths = append(paths, diagonalDownPath)
+			}
+		}
+	}
+
+	// fmt.Println("Returning path", path)
+
+	return paths
+}
+
+func (im ImageMatrix) getEnergyForPath(path Path) float64 {
+	pathEnergy := 0.0
+
+	for _, point := range path {
+		pathEnergy += im.GetEnergyOfPixel(point.x, point.y)
+	}
+
+	return pathEnergy
+}
+
+func (im ImageMatrix) getLowestEnergyPath(paths []Path) Path {
+
+	lowestEnergyPath := paths[0]
+
+	for _, path := range paths {
+		pathEnergy := im.getEnergyForPath(path)
+		// debug("energy for path", pathEnergy)
+		// debug("path is ", path)
+		// debug("energy was", pathEnergy)
+		if pathEnergy < im.getEnergyForPath(lowestEnergyPath) {
+			lowestEnergyPath = path
+		}
+	}
+
+	return lowestEnergyPath
+
+}
+
+func debug(v ...interface{}) {
+	fmt.Println(v...)
 }

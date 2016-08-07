@@ -2,8 +2,14 @@ default: clearscreen main-quick
 
 full: clearscreen clean main-full
 
+# main-quick:
+# 	@cd samples && go run ../main.go rgb.png 
+# 	@echo ""
+# 	@echo ""
+
 main-quick:
-	@cd samples && go run ../main.go rgb.png 
+	@cd samples && go run ../main.go waves.png
+	@#@cd samples && go run ../main.go flower.jpg
 	@echo ""
 	@echo ""
 
