@@ -8,7 +8,8 @@ full: clearscreen clean main-full
 # 	@echo ""
 
 main-quick:
-	@cd samples && go run ../main.go waves.png
+	@cd samples && go run ../main.go seam-test.png
+	@#@cd samples && go run ../main.go waves.png
 	@#@cd samples && go run ../main.go flower.jpg
 	@echo ""
 	@echo ""
